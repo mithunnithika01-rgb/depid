@@ -1,6 +1,6 @@
 <div align="center">
 
-<img src="frontend/public/icon.svg" width="76" alt="DID logo" />
+<img src="frontend/public/logo.png" width="76" alt="DID logo" />
 
 # DID: Defence in Depth
 ### Multi-Layered AI-Powered Brand Impersonation & Scam Defence Platform
