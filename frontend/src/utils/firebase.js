@@ -1,8 +1,10 @@
-import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-import { getAnalytics, isSupported } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics.js";
+/**
+ * Firebase Web SDK & Firestore Database Utility
+ * Project ID: defenc-id
+ * Hosting Domain: defenc-id.firebaseapp.com
+ */
 
-// Your web app's Firebase configuration
-const firebaseConfig = {
+export const firebaseConfig = {
   apiKey: "AIzaSyACP7dPKEvhYRf7om4pGVo5CHSGeRiOc3M",
   authDomain: "defenc-id.firebaseapp.com",
   projectId: "defenc-id",
@@ -12,22 +14,40 @@ const firebaseConfig = {
   measurementId: "G-C2959ZDPWE"
 };
 
-// Initialize Firebase
-let app = null;
-let analytics = null;
+// Web initialization helper
+export async function getFirebaseServices() {
+  try {
+    const { initializeApp } = await import('https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js');
+    const { getFirestore, collection, getDocs, addDoc, doc, setDoc, query, where, limit, getDoc, updateDoc, deleteDoc } = await import('https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js');
+    const { getAnalytics } = await import('https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js');
+    
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
+    let analytics = null;
+    try {
+      analytics = getAnalytics(app);
+    } catch (e) {
+      // Analytics measurementId optional
+    }
 
-try {
-  app = initializeApp(firebaseConfig);
-  if (typeof window !== "undefined") {
-    isSupported().then(supported => {
-      if (supported) {
-        analytics = getAnalytics(app);
-        console.log("[Firebase] Analytics initialized successfully with G-C2959ZDPWE");
-      }
-    }).catch(err => console.warn("[Firebase] Analytics support check:", err));
+    return {
+      app,
+      db,
+      analytics,
+      collection,
+      getDocs,
+      addDoc,
+      doc,
+      setDoc,
+      query,
+      where,
+      limit,
+      getDoc,
+      updateDoc,
+      deleteDoc
+    };
+  } catch (err) {
+    console.warn('[Firebase] Fallback to API bridge:', err);
+    return null;
   }
-} catch (error) {
-  console.error("[Firebase] Initialization error:", error);
 }
-
-export { app, analytics, firebaseConfig };

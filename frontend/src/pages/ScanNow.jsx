@@ -22,6 +22,7 @@ const PLATFORM_CONFIG = {
 };
 
 export default function ScanNow() {
+  const currentUser = JSON.parse(localStorage.getItem('did_user')) || { username: 'mithun', role: 'ADMIN', email: 'mithun@defence.ai' };
   const [brands, setBrands] = useState([]);
   const [selectedBrand, setSelectedBrand] = useState(null);
   const [selectedPlatforms, setSelectedPlatforms] = useState(ALL_PLATFORMS);
@@ -32,7 +33,7 @@ export default function ScanNow() {
   const pollRef = useRef(null);
 
   useEffect(() => {
-    brandApi.list().then(data => {
+    brandApi.list(currentUser.username).then(data => {
       setBrands(data.brands || []);
       if (data.brands?.length > 0) setSelectedBrand(data.brands[0].id);
     }).catch(() => {});
@@ -96,7 +97,7 @@ export default function ScanNow() {
           <select
             className="form-input"
             value={selectedBrand || ''}
-            onChange={e => setSelectedBrand(Number(e.target.value))}
+            onChange={e => setSelectedBrand(e.target.value)}
           >
             {brands.map(b => (
               <option key={b.id} value={b.id}>{b.brand_name} {b.website_url ? `(${b.website_url})` : ''}</option>

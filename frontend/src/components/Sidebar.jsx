@@ -1,16 +1,18 @@
 import { NavLink } from 'react-router-dom';
-import { HiHome, HiSearch, HiUser, HiChartBar, HiLogout, HiShieldCheck, HiExternalLink, HiLockClosed } from 'react-icons/hi';
+import { HiHome, HiSearch, HiUser, HiChartBar, HiShieldCheck, HiExternalLink, HiLockClosed } from 'react-icons/hi';
 
 export default function Sidebar() {
   return (
     <aside className="sidebar">
       <div className="sidebar-logo">
-        <div className="shield-icon">
-          <HiShieldCheck />
+        <div className="shield-icon" style={{ background: '#FFFFFF', padding: '2px', borderRadius: '14px', boxShadow: 'var(--shadow-flat-sm)', overflow: 'hidden' }}>
+          <img src="/logo.png" alt="DID Logo" style={{ width: '100%', height: '100%', objectFit: 'contain', transform: 'scale(1.15)', mixBlendMode: 'multiply' }} />
         </div>
         <div>
-          <h1>DID</h1>
-          <span style={{ fontSize: '11px', color: '#64748B', letterSpacing: '1px', textTransform: 'uppercase', fontWeight: '700' }}>
+          <h1 style={{ fontSize: '18px', fontWeight: '800', margin: 0, color: 'var(--text-primary)', letterSpacing: '-0.5px' }}>
+            DID
+          </h1>
+          <span style={{ fontSize: '10px', color: '#64748B', letterSpacing: '1px', textTransform: 'uppercase', fontWeight: '700' }}>
             Defence in Depth
           </span>
         </div>
@@ -48,6 +50,12 @@ export default function Sidebar() {
           <HiExternalLink style={{ marginLeft: 'auto', fontSize: '14px', opacity: 0.7 }} />
         </NavLink>
       </nav>
+
+      <div className="sidebar-footer">
+        <div style={{ padding: '8px 12px', background: 'var(--bg-main)', borderRadius: 'var(--radius-md)', fontSize: '11px', color: 'var(--text-secondary)', textAlign: 'center', boxShadow: 'var(--shadow-pressed)' }}>
+          Enterprise Console Active
+        </div>
+      </div>
     </aside>
   );
 }

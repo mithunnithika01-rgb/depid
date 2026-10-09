@@ -66,8 +66,13 @@ export default function DarkWeb() {
           <button
             onClick={handleRunDarkWebScan}
             disabled={scanning || !activeBrand}
-            className="btn btn-primary"
-            style={{ display: 'flex', alignItems: 'center', gap: '8px', padding: '12px 20px', background: 'var(--threat-high)' }}
+            className="btn"
+            style={{
+              display: 'flex', alignItems: 'center', gap: '8px',
+              padding: '12px 20px', background: 'var(--threat-high)',
+              color: '#FFFFFF', fontWeight: '700', borderRadius: 'var(--radius-md)',
+              boxShadow: '0 6px 16px rgba(239, 68, 68, 0.45)', border: 'none', cursor: 'pointer'
+            }}
           >
             <HiArrowPath className={scanning ? 'spin' : ''} style={{ fontSize: '18px' }} />
             <span>{scanning ? 'Scanning Dark Web...' : 'Run Dark Web Scan'}</span>

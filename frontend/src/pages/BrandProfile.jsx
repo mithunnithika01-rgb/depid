@@ -4,6 +4,7 @@ import { HiCamera, HiCheckCircle, HiExclamationCircle, HiShieldCheck, HiPencilSq
 import { FaTwitter, FaInstagram, FaYoutube, FaFacebook, FaLinkedin, FaGooglePlay, FaApple } from 'react-icons/fa6';
 
 export default function BrandProfile() {
+  const currentUser = JSON.parse(localStorage.getItem('did_user')) || { username: 'mithun', role: 'ADMIN', email: 'mithun@defence.ai' };
   const [brands, setBrands] = useState([]);
   const [selectedBrand, setSelectedBrand] = useState(null);
   const [form, setForm] = useState({
@@ -27,7 +28,7 @@ export default function BrandProfile() {
 
   const loadBrands = async () => {
     try {
-      const data = await brandApi.list();
+      const data = await brandApi.list(currentUser.username);
       setBrands(data.brands || []);
       if (data.brands && data.brands.length > 0 && !selectedBrand) {
         selectBrand(data.brands[0]);
@@ -121,7 +122,7 @@ export default function BrandProfile() {
       if (selectedBrand?.id) {
         result = await brandApi.update(selectedBrand.id, form);
       } else {
-        result = await brandApi.create(form);
+        result = await brandApi.create(form, currentUser.username);
       }
       
       const bId = selectedBrand?.id || result.brand?.id;

@@ -182,10 +182,11 @@ code, pre {
 }
 
 .sidebar-logo .shield-icon {
-  width: 44px;
-  height: 44px;
+  width: 58px;
+  height: 58px;
+  min-width: 58px;
   border-radius: var(--radius-md);
-  background: var(--bg-main);
+  background: #FFFFFF;
   box-shadow: var(--shadow-flat);
   display: flex;
   align-items: center;

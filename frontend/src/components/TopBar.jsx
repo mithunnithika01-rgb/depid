@@ -57,7 +57,7 @@ function UserAvatar({ user, size = AVATAR_SIZE }) {
   );
 }
 
-export default function TopBar() {
+export default function TopBar({ onLogout }) {
   const location = useLocation();
   const title = PAGE_TITLES[location.pathname] || 'Dashboard';
 
@@ -66,17 +66,9 @@ export default function TopBar() {
   const [showBrandCard, setShowBrandCard] = useState(false);
   const [showProfilePopover, setShowProfilePopover] = useState(false);
   const [showNotifications, setShowNotifications] = useState(false);
-  const [showAuthModal, setShowAuthModal] = useState(false);
   const [switchingBrand, setSwitchingBrand] = useState(false);
 
-  const [currentUser, setCurrentUser] = useState(() => {
-    const saved = localStorage.getItem('did_user');
-    return saved ? JSON.parse(saved) : {
-      username: 'mithun', role: 'ADMIN',
-      email: 'mithun@defence.ai',
-      permissions: 'ALL,TAKEDOWN,SCAN,MANAGE_USERS',
-    };
-  });
+  const currentUser = JSON.parse(localStorage.getItem('did_user')) || { username: 'mithun', role: 'ADMIN', email: 'mithun@defence.ai' };
 
   const { query: searchQuery, setQuery: setSearchQuery } = useSearch();
   const navigate = useNavigate();
@@ -88,7 +80,7 @@ export default function TopBar() {
   const notifRef = useRef(null);
 
   useEffect(() => {
-    brandApi.list().then(data => {
+    brandApi.list(currentUser?.username).then(data => {
       if (data.brands?.length > 0) {
         setBrands(data.brands);
         setActiveBrand(data.brands[0]);
@@ -97,13 +89,6 @@ export default function TopBar() {
 
     threatsApi.list({ threat_level: 'HIGH_RISK', limit: 5 }).then(data => {
       setRecentAlerts(data.threats || []);
-    }).catch(() => {});
-
-    authApi.me(currentUser?.username || 'mithun').then(res => {
-      if (res.user) {
-        setCurrentUser(res.user);
-        localStorage.setItem('did_user', JSON.stringify(res.user));
-      }
     }).catch(() => {});
   }, []);
 
@@ -119,10 +104,8 @@ export default function TopBar() {
   }, []);
 
   const handleLogout = () => {
-    localStorage.removeItem('did_user');
-    setCurrentUser(null);
     setShowProfilePopover(false);
-    setShowAuthModal(true);
+    if (onLogout) onLogout();
   };
 
   const handleSwitchBrand = (brand) => {
@@ -290,7 +273,7 @@ export default function TopBar() {
                   <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '12px' }}>
                     <BrandAvatar brand={activeBrand} size={46} />
                     <div style={{ flex: 1 }}>
-                      <div style={{ fontWeight: '800', fontSize: '16px', color: 'var(--text-primary)' }}>{activeBrand.brand_name}</div>
+                      <div style={{ fontWeight: '800', fontSize: '16px', color: 'var(--text-primary)' }}>{activeBrand.brand_name || 'Loading...'}</div>
                       <div style={{ fontSize: '12px', color: 'var(--text-secondary)' }}>{activeBrand.developer_name || 'Ground Truth Brand'}</div>
                     </div>
                     <span style={{
@@ -487,43 +470,25 @@ export default function TopBar() {
 
               {/* Actions */}
               <div style={{ padding: '12px 16px', display: 'flex', flexDirection: 'column', gap: '8px' }}>
-                {currentUser ? (
-                  <>
-                    <button
-                      onClick={() => { setShowProfilePopover(false); setShowAuthModal(true); }}
-                      className="btn btn-secondary btn-sm btn-block"
-                      style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
-                    >
-                      <HiKey /> Switch / Add Account
-                    </button>
-                    <button
-                      onClick={handleLogout}
-                      className="btn btn-ghost btn-sm btn-block"
-                      style={{ color: '#EF4444', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
-                    >
-                      <HiArrowRightOnRectangle /> Log Out
-                    </button>
-                  </>
-                ) : (
-                  <button
-                    onClick={() => { setShowProfilePopover(false); setShowAuthModal(true); }}
-                    className="btn btn-primary btn-sm btn-block"
-                  >
-                    Log In / Sign Up
-                  </button>
-                )}
+                <button
+                  onClick={() => { setShowProfilePopover(false); if (onLogout) onLogout(); }}
+                  className="btn btn-secondary btn-sm btn-block"
+                  style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
+                >
+                  <HiKey /> Switch / Add Account
+                </button>
+                <button
+                  onClick={handleLogout}
+                  className="btn btn-ghost btn-sm btn-block"
+                  style={{ color: '#EF4444', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '6px' }}
+                >
+                  <HiArrowRightOnRectangle /> Log Out
+                </button>
               </div>
             </div>
           )}
         </div>
       </div>
-
-      <AuthModal
-        isOpen={showAuthModal}
-        onClose={() => setShowAuthModal(false)}
-        currentUser={currentUser}
-        onUserChange={(newUser) => setCurrentUser(newUser)}
-      />
     </header>
   );
 }

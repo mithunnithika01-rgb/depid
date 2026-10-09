@@ -43,7 +43,7 @@ export default function Analytics() {
       try {
         const [statsRes, threatsRes] = await Promise.all([
           threatsApi.stats(),
-          threatsApi.list({ limit: 500 }),
+          threatsApi.list({ limit: 100 }),
         ]);
         setStats(statsRes);
         setThreats(threatsRes.threats || []);

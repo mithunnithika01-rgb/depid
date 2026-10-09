@@ -112,17 +112,24 @@ async def init_db():
             CREATE INDEX IF NOT EXISTS idx_scan_jobs_status ON scan_jobs(status);
         """)
 
-        # Seed default admin user 'mithun' if not present
+        # Seed 4 distinct users with different authentication and authorization roles
         import hashlib
-        cursor = await db.execute("SELECT COUNT(*) as count FROM users")
-        row = await cursor.fetchone()
-        if row["count"] == 0:
-            pw_hash = hashlib.sha256("mithun123".encode()).hexdigest()
-            await db.execute(
-                "INSERT INTO users (username, email, password_hash, role, permissions) VALUES (?, ?, ?, ?, ?)",
-                ("mithun", "mithun@defence.ai", pw_hash, "ADMIN", "ALL,TAKEDOWN,SCAN,MANAGE_USERS")
-            )
-            print("[OK] Created default admin user 'mithun'")
+        users_to_seed = [
+            ("mithun", "mithun@defence.ai", "mithun123", "ADMIN", "ALL,TAKEDOWN,SCAN,MANAGE_USERS,SYSTEM_CONFIG"),
+            ("sarah_analyst", "sarah.analyst@defence.ai", "analyst123", "ANALYST", "SCAN,TAKEDOWN_REQUEST,REVIEW_THREATS"),
+            ("alex_investigator", "alex.investigator@defence.ai", "investigator123", "INVESTIGATOR", "SCAN,DARKWEB_MONITOR,ITEM_INSPECT"),
+            ("david_auditor", "david.auditor@defence.ai", "auditor123", "AUDITOR", "READ_ONLY,VIEW_REPORTS,EXPORT_METRICS"),
+        ]
+
+        for uname, uemail, upass, urole, uperms in users_to_seed:
+            cursor = await db.execute("SELECT id FROM users WHERE username = ?", (uname,))
+            if not await cursor.fetchone():
+                pw_hash = hashlib.sha256(upass.encode()).hexdigest()
+                await db.execute(
+                    "INSERT INTO users (username, email, password_hash, role, permissions) VALUES (?, ?, ?, ?, ?)",
+                    (uname, uemail, pw_hash, urole, uperms),
+                )
+                print(f"[OK] Seeded user '{uname}' ({urole})")
 
         # Seed default brand profile if not present
         cursor = await db.execute("SELECT COUNT(*) as count FROM brand_profiles")

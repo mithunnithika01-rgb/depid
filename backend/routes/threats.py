@@ -16,7 +16,7 @@ async def list_threats(
     platform: Optional[str] = None,
     threat_level: Optional[str] = None,
     scan_type: Optional[str] = None,
-    limit: int = Query(default=50, le=200),
+    limit: int = Query(default=50, le=1000),
     offset: int = Query(default=0, ge=0),
 ):
     """List threat results with optional filters."""

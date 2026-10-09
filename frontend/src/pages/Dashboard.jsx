@@ -71,29 +71,7 @@ export default function Dashboard() {
 
   const totalDonutSum = donutChartData.reduce((acc, curr) => acc + curr.value, 0);
 
-  const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent }) => {
-    if (!percent || percent <= 0) return null;
-    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-    const RADIAN = Math.PI / 180;
-    const x = cx + radius * Math.cos(-midAngle * RADIAN);
-    const y = cy + radius * Math.sin(-midAngle * RADIAN);
-
-    return (
-      <text
-        x={x}
-        y={y}
-        fill="#ffffff"
-        textAnchor="middle"
-        dominantBaseline="central"
-        fontSize="12px"
-        fontWeight="800"
-      >
-        {`${(percent * 100).toFixed(0)}%`}
-      </text>
-    );
-  };
-
-  const totalThreatsCount = stats ? stats.total : threats.length;
+  const totalThreatsCount = stats ? (stats.total_threats || 0) : threats.length;
   const highRiskCount = stats?.by_level?.HIGH_RISK || threats.filter(t => t.threat_level === 'HIGH_RISK').length;
 
   return (
@@ -179,8 +157,6 @@ export default function Dashboard() {
                     outerRadius={80}
                     paddingAngle={4}
                     dataKey="value"
-                    labelLine={false}
-                    label={renderCustomizedLabel}
                   >
                     {donutChartData.map((entry, index) => (
                       <Cell key={`cell-${index}`} fill={entry.color} />
