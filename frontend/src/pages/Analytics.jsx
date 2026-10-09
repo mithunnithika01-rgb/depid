@@ -181,21 +181,34 @@ export default function Analytics() {
               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                 <ResponsiveContainer width="100%" height={220}>
                   <PieChart>
-                    <Pie data={actionData} cx="50%" cy="50%" innerRadius={55} outerRadius={80} paddingAngle={4} dataKey="value">
+                    <Pie
+                      data={actionData}
+                      cx="50%"
+                      cy="50%"
+                      innerRadius={55}
+                      outerRadius={80}
+                      paddingAngle={4}
+                      dataKey="value"
+                      labelLine={false}
+                      label={({ percent }) => percent > 0 ? `${(percent * 100).toFixed(0)}%` : ''}
+                    >
                       {actionData.map((entry, i) => <Cell key={i} fill={entry.color} />)}
                     </Pie>
-                    <Tooltip contentStyle={tooltipStyle} formatter={(v, n) => [v, n]} />
+                    <Tooltip contentStyle={tooltipStyle} formatter={(v, n) => [`${v} (${threats.length > 0 ? ((v / threats.length) * 100).toFixed(1) : 0}%)`, n]} />
                   </PieChart>
                 </ResponsiveContainer>
               </div>
-              {/* Legend */}
+              {/* Legend with percentages */}
               <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px', justifyContent: 'center', marginTop: '8px' }}>
-                {actionData.map(d => (
-                  <div key={d.name} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', fontWeight: '700', color: 'var(--text-secondary)' }}>
-                    <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: d.color, display: 'inline-block' }} />
-                    {d.name} ({d.value})
-                  </div>
-                ))}
+                {actionData.map(d => {
+                  const pct = threats.length > 0 ? Math.round((d.value / threats.length) * 100) : 0;
+                  return (
+                    <div key={d.name} style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '12px', fontWeight: '700', color: 'var(--text-secondary)' }}>
+                      <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: d.color, display: 'inline-block' }} />
+                      {d.name}: {d.value} ({pct}%)
+                    </div>
+                  );
+                })}
               </div>
             </>
           ) : (

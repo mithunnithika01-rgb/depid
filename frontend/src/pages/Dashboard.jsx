@@ -69,6 +69,30 @@ export default function Dashboard() {
     { name: 'Safe', value: stats?.by_level?.SAFE || 0, color: '#10B981' },
   ];
 
+  const totalDonutSum = donutChartData.reduce((acc, curr) => acc + curr.value, 0);
+
+  const renderCustomizedLabel = ({ cx, cy, midAngle, innerRadius, outerRadius, percent }) => {
+    if (!percent || percent <= 0) return null;
+    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
+    const RADIAN = Math.PI / 180;
+    const x = cx + radius * Math.cos(-midAngle * RADIAN);
+    const y = cy + radius * Math.sin(-midAngle * RADIAN);
+
+    return (
+      <text
+        x={x}
+        y={y}
+        fill="#ffffff"
+        textAnchor="middle"
+        dominantBaseline="central"
+        fontSize="12px"
+        fontWeight="800"
+      >
+        {`${(percent * 100).toFixed(0)}%`}
+      </text>
+    );
+  };
+
   const totalThreatsCount = stats ? stats.total : threats.length;
   const highRiskCount = stats?.by_level?.HIGH_RISK || threats.filter(t => t.threat_level === 'HIGH_RISK').length;
 
@@ -139,34 +163,74 @@ export default function Dashboard() {
 
         {/* Activity Donut */}
         <div className="card">
-          <div className="card-header">
+          <div className="card-header" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <span className="card-title">Threat Breakdown</span>
+            <span style={{ fontSize: '11px', fontWeight: '700', color: 'var(--text-muted)' }}>
+              Total: {totalDonutSum}
+            </span>
           </div>
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-            <ResponsiveContainer width="100%" height={240}>
-              <PieChart>
-                <Pie
-                  data={donutChartData}
-                  innerRadius={60}
-                  outerRadius={85}
-                  paddingAngle={5}
-                  dataKey="value"
-                >
-                  {donutChartData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={entry.color} />
-                  ))}
-                </Pie>
-                <Tooltip 
-                  contentStyle={{ 
-                    background: '#E6E9EF',
-                    borderRadius: '12px',
-                    boxShadow: '6px 6px 14px #c2c7d0, -6px -6px 14px #ffffff',
-                    border: 'none',
-                    fontFamily: 'Plus Jakarta Sans',
-                  }} 
-                />
-              </PieChart>
-            </ResponsiveContainer>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+            <div style={{ position: 'relative', width: '100%', height: 180 }}>
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={donutChartData}
+                    innerRadius={50}
+                    outerRadius={80}
+                    paddingAngle={4}
+                    dataKey="value"
+                    labelLine={false}
+                    label={renderCustomizedLabel}
+                  >
+                    {donutChartData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={entry.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip 
+                    formatter={(val, name) => [
+                      `${val} (${totalDonutSum > 0 ? ((val / totalDonutSum) * 100).toFixed(1) : 0}%)`,
+                      name
+                    ]}
+                    contentStyle={{ 
+                      background: '#E6E9EF',
+                      borderRadius: '12px',
+                      boxShadow: '6px 6px 14px #c2c7d0, -6px -6px 14px #ffffff',
+                      border: 'none',
+                      fontFamily: 'Plus Jakarta Sans',
+                    }} 
+                  />
+                </PieChart>
+              </ResponsiveContainer>
+              <div style={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                textAlign: 'center',
+                pointerEvents: 'none',
+              }}>
+                <div style={{ fontSize: '18px', fontWeight: '800', color: 'var(--text-primary)', lineHeight: 1 }}>
+                  {totalDonutSum > 0 ? `${Math.round(((donutChartData[2].value) / totalDonutSum) * 100)}%` : '0%'}
+                </div>
+                <div style={{ fontSize: '9px', fontWeight: '800', color: 'var(--threat-safe)', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                  Safe Rate
+                </div>
+              </div>
+            </div>
+
+            {/* Legend with exact percentages */}
+            <div style={{ display: 'flex', gap: '12px', flexWrap: 'wrap', justifyContent: 'center', marginTop: '10px' }}>
+              {donutChartData.map((item) => {
+                const pct = totalDonutSum > 0 ? Math.round((item.value / totalDonutSum) * 100) : 0;
+                return (
+                  <div key={item.name} style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '12px', fontWeight: '700', color: 'var(--text-secondary)' }}>
+                    <div style={{ width: '9px', height: '9px', borderRadius: '50%', background: item.color }} />
+                    <span>{item.name}:</span>
+                    <span style={{ color: 'var(--text-primary)', fontWeight: '800' }}>{item.value} ({pct}%)</span>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
       </div>
