@@ -1,5 +1,5 @@
-import { initializeApp } from "firebase/app";
-import { getAnalytics, isSupported } from "firebase/analytics";
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import { getAnalytics, isSupported } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-analytics.js";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
@@ -22,11 +22,12 @@ try {
     isSupported().then(supported => {
       if (supported) {
         analytics = getAnalytics(app);
+        console.log("[Firebase] Analytics initialized successfully with G-C2959ZDPWE");
       }
-    }).catch(err => console.warn("Firebase analytics not supported:", err));
+    }).catch(err => console.warn("[Firebase] Analytics support check:", err));
   }
 } catch (error) {
-  console.error("Firebase init error:", error);
+  console.error("[Firebase] Initialization error:", error);
 }
 
 export { app, analytics, firebaseConfig };
