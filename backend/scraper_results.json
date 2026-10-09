@@ -1,0 +1,56 @@
+{
+  "Apple Store": {
+    "status": "NO_RESULTS",
+    "count": 0,
+    "sample_title": null,
+    "error": null
+  },
+  "Google Play": {
+    "status": "WORKING",
+    "count": 15,
+    "sample_title": "Nike: Engineered for Athletes",
+    "error": null
+  },
+  "YouTube": {
+    "status": "NO_RESULTS",
+    "count": 0,
+    "sample_title": null,
+    "error": null
+  },
+  "Twitter": {
+    "status": "NO_RESULTS",
+    "count": 0,
+    "sample_title": null,
+    "error": null
+  },
+  "Instagram": {
+    "status": "NO_RESULTS",
+    "count": 0,
+    "sample_title": null,
+    "error": null
+  },
+  "Facebook": {
+    "status": "NO_RESULTS",
+    "count": 0,
+    "sample_title": null,
+    "error": null
+  },
+  "LinkedIn": {
+    "status": "NO_RESULTS",
+    "count": 0,
+    "sample_title": null,
+    "error": null
+  },
+  "Google Search": {
+    "status": "NO_RESULTS",
+    "count": 0,
+    "sample_title": null,
+    "error": null
+  },
+  "Dark Web": {
+    "status": "NO_RESULTS",
+    "count": 0,
+    "sample_title": null,
+    "error": null
+  }
+}
