@@ -99,24 +99,26 @@ export const scanApi = {
     
     const data = JSON.parse(dataStr);
     const platforms = data.platforms || [];
-    const total = platforms.length;
+    const total = platforms.length || 1;
     
     const elapsed = Date.now() - parseInt(data.start);
-    const DURATION = 5000;
+    const DURATION = 4000; // 4 seconds total scan simulation
     
     if (elapsed < DURATION) {
       const completed = Math.floor((elapsed / DURATION) * total);
-      const current_platform = platforms[completed] || platforms[platforms.length - 1];
+      const current_platform = platforms[completed] || platforms[platforms.length - 1] || 'Web Scraper';
       return { 
         status: "SCANNING", 
         job: { 
           status: "running", 
           platforms_total: total, 
           platforms_completed: completed,
-          current_platform
+          current_platform: current_platform
         } 
       };
     }
+    
+    // Scan Complete - Generate Realistic Threats
     localStorage.removeItem(jobId);
     
     const fb = await getFirebaseServices();
